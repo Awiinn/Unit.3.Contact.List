@@ -1,6 +1,24 @@
-import React from "react";
+import { useState, useEffect } from "react";
+import ContactRow from "./ContactRow";
 
-export default function ContactList() {
+export default function ContactList({ setSelectedContactId }) {
+  const [contacts, setContacts] = useState([]);
+
+  useEffect(() => {
+    async function fetchContacts() {
+      try {
+        const response = await fetch(
+          "https://jsonplaceholder.typicode.com/users"
+        );
+        const result = await response.json();
+        setContacts(result);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchContacts();
+  }, []);
+
   return (
     <table>
       <thead>
@@ -14,9 +32,13 @@ export default function ContactList() {
           <td>Email</td>
           <td>Phone</td>
         </tr>
-        {
-          // Map over data here
-        }
+        {contacts.map((contact) => (
+          <ContactRow
+            key={contact.id}
+            contact={contact}
+            setSelectedContactId={setSelectedContactId}
+          />
+        ))}
       </tbody>
     </table>
   );
